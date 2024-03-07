@@ -1,3 +1,9 @@
+provider "aws" {
+  region = "us-east-1"
+  // the profile is found in the ~/.aws/credentials file and im setting the region here
+  profile = "my_aws_profile"
+}
+
 terraform {
   required_providers {
     aws = {
@@ -6,12 +12,33 @@ terraform {
     }
   }
 
+  # configured backend to store the terraform.tfstate file in s3 bucket called terraform-bucket-for-state-s3
+  backend "s3" {
+    bucket         = "terraform-bucket-for-state-s3"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    # dynamodb_table = "terraform_locks"
+
+    # Specify the profile if you're using AWS credentials profile
+    profile = "my_aws_profile"
+  }
+
   required_version = ">= 1.2.0"
 }
 
-provider "aws" {
-  region = "us-east-1"
+# Create S3 bucket
+# When you create an s3 bucket, the name must be UNIQUE and it must not contain underscores
+# I needed to create this s3 bucket first before i configured the backend. Not sure how I can create both at the same time :/
+resource "aws_s3_bucket" "terraform-bucket-for-state-s3" {
+  bucket = "terraform-bucket-for-state-s3"
+
+  tags = {
+    Name = "Terraform State Bucket for tfstate"
+  }
 }
+
+
 
 # Define VPC
 resource "aws_vpc" "my_vpc" {
@@ -147,5 +174,10 @@ resource "aws_instance" "app_server" {
   }
 }
 
+
+
+
+
 // next steps: store state file in s3 bucket
+// setup the jenkins environment to do the same thing as the app environment with github push 
 
