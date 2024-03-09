@@ -1,5 +1,10 @@
+// gives a random id so we can set unique identifiers for resources
+resource "random_id" "id" {
+	  byte_length = 8
+}
+
 resource "aws_launch_template" "ec2_lt_public" {
-  name_prefix   = "LT_"
+  name_prefix   = "LT_${random_id.id.hex}"
   description   = "LC for EC2 instances"
   image_id      = "ami-07761f3ae34c4478d"
   instance_type = "t2.micro"
@@ -11,6 +16,7 @@ resource "aws_launch_template" "ec2_lt_public" {
 
   network_interfaces {
     associate_public_ip_address = true
+    // sg's need to be assigned here to use public ip addresses
     security_groups = [ aws_security_group.my_terraform_sg.id ]
   }
 
@@ -22,7 +28,8 @@ resource "aws_launch_template" "ec2_lt_public" {
     resource_type = "instance"
     tags = {
         // appending a unique identifier method to the name
-      Name = "TerraformServer-${uuid()}"
+      Name = "TerraformServer-${random_id.id.hex}"
     }
   }
+
 }
