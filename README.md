@@ -7,6 +7,7 @@ VPC - route tables, subnets, security groups that allows ssh, http, https, and 8
 2 public and 2 private subnets
 A launch template with bootstrapped ec2 instances that are in the VPC network
 Auto scaling group
+S3 bucket that holds the terraform.tfstate file 
 
 To be added:
 Application Load Balancer
