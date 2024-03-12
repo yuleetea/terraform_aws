@@ -41,3 +41,26 @@ resource "aws_security_group" "my_terraform_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+# Define Security Group
+resource "aws_security_group" "my_rds_sg" {
+  name        = "my_rds_sg"
+  description = "Security group for my rds"
+  vpc_id      = aws_vpc.my_vpc.id
+
+  # Ingress rules
+  ingress {
+    from_port   = 3306 # mysql default port
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["100.34.2.23/32"] // Allow access only from my IP
+  }
+
+  # Egress rules
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}

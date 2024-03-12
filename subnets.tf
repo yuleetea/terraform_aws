@@ -49,3 +49,10 @@ resource "aws_subnet" "my_private_subnet_2" {
     Name = "my-private-subnet-2"
   }
 }
+
+# database subnet group name, referenced in rds_db.tf. Launches rds mysql in public 1 and public 2 subnet
+resource "aws_db_subnet_group" "my_db_subnet_group" {
+  name       = "my_db_subnet_group"
+  subnet_ids = [aws_subnet.my_public_subnet_1.id, aws_subnet.my_public_subnet_2.id]  # Specify the subnet IDs for your subnet group
+  description = "My DB subnet group"
+}
